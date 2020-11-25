@@ -6,8 +6,8 @@ using namespace std;
 
 int main() {
     dsu D(10);
-    cout << (D.find(1) == D.find(2)) << endl;
+    cout << (D[1] == D[2]) << endl;
     D.join(1, 2);
-    cout << (D.find(1) == D.find(2)) << endl;
-    cout << (D.find(1) == D.find(3)) << endl;
+    cout << (D[1] == D[2]) << endl;
+    cout << (D[1] == D[3]) << endl;
 }

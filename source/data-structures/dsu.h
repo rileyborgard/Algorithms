@@ -13,11 +13,11 @@ struct dsu {
     dsu(int n) {
         a.assign(n, -1);
     }
-    int find(int x) {
-        return a[x] < 0 ? x : a[x] = find(a[x]);
+    int operator[](int x) {
+        return a[x] < 0 ? x : a[x] = (*this)[a[x]];
     }
     bool join(int x, int y) {
-        if((x = find(x)) == (y = find(y))) return false;
+        if((x = (*this)[x]) == (y = (*this)[y])) return false;
         if(a[x] > a[y]) swap(x, y);
         a[x] += a[y];
         a[y] = x;
