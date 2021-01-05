@@ -49,7 +49,7 @@ struct mod {
     mod inv() const {
         return pow(m - 2);
     }
-    mod operator/(const mod &a) {
+    mod operator/(const mod &a) const {
         return (*this) * a.inv();
     }
     mod operator/=(const mod &a) {
