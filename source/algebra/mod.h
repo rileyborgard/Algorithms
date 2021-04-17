@@ -73,3 +73,8 @@ istream &operator>>(istream &is, mod<m> &n) {
     n = x;
     return is;
 }
+
+template<int m>
+ostream &operator<<(ostream &os, const mod<m> &n) {
+    return os << n();
+}
