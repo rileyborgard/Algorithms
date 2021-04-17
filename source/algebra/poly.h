@@ -41,8 +41,9 @@ struct poly {
         return i > deg ? T() : a[i];
     }
     void set(size_t i, const T &t) {
-        a[i] = t;
         deg = max(deg, i);
+        resize(deg + 1);
+        a[i] = t;
     }
     poly operator+(const poly &A) const {
         poly P;
@@ -193,21 +194,21 @@ struct poly {
 template<int m>
 void print(const poly<mod<m>> &P) {
     cout << P[0]();
-    for(size_t i = 1; i < P.size(); i++) {
+    for(size_t i = 1; i <= P.deg; i++) {
         cout << " + " << P[i]() << " x^" << i;
     }
     cout << '\n';
 }
 void print(const poly<cd> &P) {
     cout << round(P[0].real());
-    for(size_t i = 1; i < P.size(); i++) {
+    for(size_t i = 1; i <= P.deg; i++) {
         cout << " + " << round(P[i].real()) << " x^" << i;
     }
     cout << '\n';
 }
 void printreal(const poly<cd> &P) {
     cout << round(P[0].real());
-    for(size_t i = 1; i < P.size(); i++) {
+    for(size_t i = 1; i <= P.deg; i++) {
         cout << " + " << P[i].real() << " x^" << i;
     }
     cout << '\n';
