@@ -1,20 +1,20 @@
 
 template<typename T>
 struct bit {
-    int n, lg;
+    size_t n, lg;
     vector<T> a;
-    bit(int n) : n(n) {
+    bit(size_t n) : n(n) {
         a.assign(n, T());
         lg = 0;
-        while(2 * (1 << lg) < n) lg++;
+        while(2 * (1u << lg) < n) lg++;
     }
-    void add(int i, T x) {
+    void add(size_t i, T x) {
         while(i < n) {
             a[i] = a[i] + x;
             i += i & -i;
         }
     }
-    T get(int i) {
+    T get(size_t i) {
         T x = T();
         while(i > 0) {
             x = x + a[i];
@@ -22,15 +22,15 @@ struct bit {
         }
         return x;
     }
-    int lower_bound(T val) {
-        int i = 0;
+    size_t lower_bound(T val) {
+        size_t i = 0;
         T sum = T();
-        for(int k = lg; k >= 0; k--) {
+        for(size_t k = lg; ; k--) {
             if(i + (1 << k) < n && sum + a[i + (1 << k)] < val) {
                 i += (1 << k);
                 sum = sum + a[i];
             }
+            if(k == 0) return i + 1;
         }
-        return i + 1;
     }
 };
