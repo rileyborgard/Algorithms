@@ -6,9 +6,7 @@ using namespace std;
 
 int main() {
     bit<int> B(10);
-    cout << B[5] << endl;
-    B.upd(3, 2);
-    B.upd(7, 4);
-    B.upd(5, 5);
-    cout << B[5] << endl;
+    B.add(1, 3);
+    B.add(4, 5);
+    cout << B.lower_bound(9) << '\n';
 }

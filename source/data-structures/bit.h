@@ -1,30 +1,36 @@
 
-/*
- * Fenwick Tree / Binary-Indexed Tree
- * upd(i, x) increments position i of the array to x
- *      Complexity: log(n)
- * operator[](i) returns the sum in the range [1, i]
- *      Complexity: log(n)
- */
-
 template<typename T>
 struct bit {
+    int n, lg;
     vector<T> a;
-    bit(int n) {
-        a.assign(n, {});
+    bit(int n) : n(n) {
+        a.assign(n, T());
+        lg = 0;
+        while(2 * (1 << lg) < n) lg++;
     }
-    void upd(int i, T x) {
-        while(i < (int) a.size()) {
+    void add(int i, T x) {
+        while(i < n) {
             a[i] = a[i] + x;
             i += i & -i;
         }
     }
-    T operator[](int i) {
-        T x = {};
+    T get(int i) {
+        T x = T();
         while(i > 0) {
             x = x + a[i];
             i -= i & -i;
         }
         return x;
+    }
+    int lower_bound(T val) {
+        int i = 0;
+        T sum = T();
+        for(int k = lg; k >= 0; k--) {
+            if(i + (1 << k) < n && sum + a[i + (1 << k)] < val) {
+                i += (1 << k);
+                sum = sum + a[i];
+            }
+        }
+        return i + 1;
     }
 };
