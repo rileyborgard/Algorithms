@@ -22,7 +22,7 @@ struct sparse {
             }
         }
     }
-    int query(int l, int r) {
+    T query(int l, int r) {
         int j = log[r - l + 1];
         return min(st[l][j], st[r - (1 << j) + 1][j], Compare{});
     }
