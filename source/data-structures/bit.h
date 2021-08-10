@@ -24,12 +24,12 @@ struct bit {
     int lower_bound(T val) {
         int i = 0;
         T sum = T();
-        for(int k = lg; ; k--) {
+        for(int k = lg; k >= 0; k--) {
             if(i + (1 << k) < n && sum + a[i + (1 << k)] < val) {
                 i += (1 << k);
                 sum = sum + a[i];
             }
-            if(k == 0) return i + 1;
         }
+        return i + 1;
     }
 };
