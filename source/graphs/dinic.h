@@ -9,11 +9,7 @@ struct dinic {
     vector<edge> e;
     vector<vector<int>> g;
     vector<int> level, p;
-    dinic(int n) {
-        g.resize(n);
-        p.resize(n);
-        level.resize(n);
-    }
+    dinic(int n) : g(n), p(n), level(n) {}
     void add_edge(int u, int v, C c) {
         int k = (int) e.size();
         e.push_back({v, c, 0});
