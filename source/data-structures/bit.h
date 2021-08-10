@@ -3,10 +3,9 @@ template<typename T>
 struct bit {
     int n, lg;
     vector<T> a;
-    bit(int n) : n(n) {
-        a.assign(n, T());
+    bit(int n) : n(n), a(n) {
         lg = 0;
-        while(2 * (1u << lg) < n) lg++;
+        while(2 * (1 << lg) < n) lg++;
     }
     void add(int i, T x) {
         while(i < n) {
