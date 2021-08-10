@@ -5,15 +5,7 @@ struct blossom {
     vector<vector<int>> b;
     vector<int> p, d, bl;
     vector<vector<int>> g;
-    blossom(int n) : n(n) {
-        m = n + n / 2;
-        mate.assign(n, -1);
-        b.resize(m);
-        p.resize(m);
-        d.resize(m);
-        bl.resize(m);
-        g.assign(m, vector<int>(m, -1));
-    }
+    blossom(int n) : n(n), mate(n, -1), b(n+n/2), p(n+n/2), d(n+n/2), bl(n+n/2), g(n+n/2, vector<int>(n+n/2, -1)) {}
     void add_edge(int u, int v) {
         g[u][v] = u;
         g[v][u] = v;
