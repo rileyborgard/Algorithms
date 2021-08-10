@@ -4,12 +4,7 @@ struct scc {
     vector<vector<int>> g, gr;
     vector<int> st, comp;
     vector<bool> vis;
-    scc(int n) : n(n) {
-        g.resize(n);
-        gr.resize(n);
-        vis.assign(n, false);
-        comp.assign(n, -1);
-    }
+    scc(int n) : n(n), g(n), gr(n), vis(n), comp(n, -1) {}
     void add_edge(int u, int v) {
         g[u].push_back(v);
         gr[v].push_back(u);
