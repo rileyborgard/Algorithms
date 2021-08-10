@@ -10,8 +10,7 @@ struct offline_deletion : public D {
     vector<Q> ans;
     vector<vector<U>> updates;
     int q;
-    offline_deletion(int queries) : q(queries) {
-        ans.resize(q);
+    offline_deletion(int queries) : q(queries), ans(q) {
         int lg = 0;
         while((1 << lg) < q) lg++;
         updates.resize(1 << (lg + 1));
