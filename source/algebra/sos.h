@@ -3,9 +3,7 @@ template<typename T>
 struct sos {
     int n;
     vector<T> a;
-    sos(size_t n) : n(n) {
-        a.assign((1 << n), T());
-    }
+    sos(size_t n) : n(n), a(1 << n) {}
     void clear() {
         fill(a.begin(), a.end(), T());
     }
