@@ -78,13 +78,14 @@ struct graph_matroid {
 			}
 		}
 	}
-	bool anc(int x, int y) {
+	bool anc(int x, int y) const {
 		return tin[x] <= tin[y] && tout[y] <= tout[x];
 	}
-	bool free(const edge &x) {
+	bool free(const edge &x) const {
 		return comp[x.u] != comp[x.v];
 	}
-	bool exchange(const edge &x, const edge &y) {
+	bool exchange(const edge &x, const edge &y) const {
+		if(comp[y.u] != comp[y.v]) return true;
 		int u = (tin[x.u] < tin[x.v] ? x.v : x.u);
 		return anc(u, y.u) ^ anc(u, y.v);
 	}
@@ -149,6 +150,84 @@ struct matroid_intersection {
 			}
 			if(aug) rank++;
 			else break;
+		}
+		return basis;
+	}
+	template<typename Cost>
+	vector<int> solve(const vector<pair<E1, E2>> &e, const vector<Cost> &cost) {
+		int rank = 0, n = (int) e.size();
+		vector<bool> used(n, false);
+		const Cost MX = numeric_limits<Cost>::max();
+		vector<vector<Cost>> dist(2, vector<Cost>(n, MX));
+		vector<int> par(n, -1);
+		vector<vector<int>> g(n);
+		while(true) {
+			m1.clear(); m2.clear();
+			for(int i = 0; i < n; i++) {
+				g[i].clear();
+				if(used[i]) {
+					m1.add(e[i].first);
+					m2.add(e[i].second);
+				}
+			}
+			m1.prepare(); m2.prepare();
+			
+			for(int i = 0; i < n; i++) {
+				if(!used[i] && m2.free(e[i].second)) {
+					dist[0][i] = cost[i];
+					par[i] = i;
+				}else {
+					dist[0][i] = MX;
+					par[i] = -1;
+				}
+				if(used[i]) {
+					for(int j = 0; j < n; j++) {
+						if(!used[j]) {
+							if(m1.exchange(e[i].first, e[j].first)) {
+								g[i].push_back(j);
+							}
+							if(m2.exchange(e[i].second, e[j].second)) {
+								g[j].push_back(i);
+							}
+						}
+					}
+				}
+			}
+			Cost best = MX;
+			int idx = -1;
+			bool go = true;
+			while(go) {
+				go = false;
+				for(int i = 0; i < n; i++) {
+					if(dist[0][i] < best && m1.free(e[i].first)) {
+						best = dist[0][i];
+						idx = i;
+					}
+					dist[1][i] = dist[0][i];
+					Cost c = (used[i] ? -cost[i] : cost[i]);
+					for(int j : g[i]) {
+						if(dist[0][j] != MX && c + dist[0][j] < dist[1][i]) {
+							go = true;
+							dist[1][i] = c + dist[0][j];
+							par[i] = j;
+						}
+					}
+				}
+				dist[0].swap(dist[1]);
+			}
+			if(idx == -1) break;
+			rank++;
+			while(par[idx] != idx) {
+				used[idx] = !used[idx];
+				idx = par[idx];
+			}
+			used[idx] = !used[idx];
+		}
+		vector<int> basis;
+		for(int i = 0; i < n; i++) {
+			if(used[i]) {
+				basis.push_back(i);
+			}
 		}
 		return basis;
 	}
