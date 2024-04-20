@@ -77,7 +77,10 @@ template<typename T, size_t N, size_t M>
 ostream& operator<<(ostream &os, const mat<T, N, M> &A) {
     for(size_t i = 0; i < N; i++) {
         for(size_t j = 0; j < M; j++) {
-            os << A[i][j] << ' ';
+            os << A[i][j];
+            if(j < M - 1) {
+                os << ' ';
+            }
         }
         os << '\n';
     }
@@ -86,8 +89,11 @@ ostream& operator<<(ostream &os, const mat<T, N, M> &A) {
 
 template<typename T, size_t N>
 ostream& operator<<(ostream &os, const array<T, N> &v) {
-    for(size_t i = 0; i < 2; i++) {
-        os << v[i] << ' ';
+    for(size_t i = 0; i < N; i++) {
+        os << v[i];
+        if(i < N - 1) {
+            os << ' ';
+        }
     }
     return os;
 }
