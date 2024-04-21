@@ -37,14 +37,13 @@ ostream &operator<<(ostream &os, const vector<T> &ve) {
     return os;
 }
 template <typename T, typename... V>
-void OUTPUT_PRINT(T &&head, V &&... tail) {
+void PRINT(T &&head, V &&... tail) {
     cout << head << ' ';
     if constexpr (sizeof...(tail)) {
-        OUTPUT_PRINT(tail...);
+        PRINT(tail...);
     }
 }
-void OUTPUT_PRINT() {}
-#define PRINT(...) {OUTPUT_PRINT(__VA_ARGS__);}
+void PRINT() {}
 #define PRINTLN(...) {OUTPUT_PRINT(__VA_ARGS__); cout << '\n';}
 
 #ifndef ONLINE_JUDGE
