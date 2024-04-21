@@ -10,18 +10,44 @@ using namespace std;
 template<typename T>
 using minpq = priority_queue<T, vector<T>, greater<T>>;
 
-#ifndef ONLINE_JUDGE
+template<typename>
+struct is_vector : std::false_type {};
+template<typename T, typename A>
+struct is_vector<std::vector<T,A>> : std::true_type {};
 template<typename T>
 ostream &operator<<(ostream &os, const vector<T> &ve) {
-    int n = min(sz(ve), 50);
-    os << "[ ";
-    rep(i, 0, n) {
-        os << ve[i];
-        if (i != n - 1) os << ", ";
+    if (os.rdbuf() == std::cerr.rdbuf()) {
+        int n = min(sz(ve), 50);
+        os << "[ ";
+        rep(i, 0, n) {
+            os << ve[i];
+            if (i != n - 1) os << ", ";
+        }
+        if (n < sz(ve)) os << "...";
+        os << " ]";
+    } else {
+        int n = sz(ve);
+        rep(i, 0, n) {
+            os << ve[i] << ' ';
+            if constexpr(is_vector<T>::value) {
+                os << '\n';
+            }
+        }
     }
-    if (n < sz(ve)) os << "...";
-    return os << " ]";
+    return os;
 }
+template <typename T, typename... V>
+void OUTPUT_PRINT(T &&head, V &&... tail) {
+    cout << head << ' ';
+    if constexpr (sizeof...(tail)) {
+        OUTPUT_PRINT(tail...);
+    }
+}
+void OUTPUT_PRINT() {}
+#define PRINT(...) {OUTPUT_PRINT(__VA_ARGS__);}
+#define PRINTLN(...) {OUTPUT_PRINT(__VA_ARGS__); cout << '\n';}
+
+#ifndef ONLINE_JUDGE
 template <typename T, typename... V>
 void DEBUG_PRINT(const char *names, T &&head, V &&... tail) {
     int i = 0;
