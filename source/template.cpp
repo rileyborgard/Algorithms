@@ -1,3 +1,4 @@
+// Source: https://github.com/rileyborgard/Algorithms/blob/main/source/template.cpp
 #include <bits/stdc++.h>
 
 #define ll long long
@@ -37,66 +38,50 @@ ostream &operator<<(ostream &os, const vector<T> &ve) {
     return os;
 }
 template <typename T, typename... V>
-void PRINT(T &&head, V &&... tail) {
+void print(T &&head, V &&... tail) {
     cout << head << ' ';
     if constexpr (sizeof...(tail)) {
-        PRINT(tail...);
+        print(tail...);
     }
 }
-void PRINT() {}
-#define PRINTLN(...) {OUTPUT_PRINT(__VA_ARGS__); cout << '\n';}
+void print() {}
+#define println(...) {print(__VA_ARGS__); cout << '\n';}
 
-#ifndef ONLINE_JUDGE
-template <typename T, typename... V>
-void DEBUG_PRINT(const char *names, T &&head, V &&... tail) {
-    int i = 0;
-    while (names[i] != ',' && names[i] != '\0') i++;
-    cerr.write(names, i);
-    cerr << " = " << head;
-    if constexpr (sizeof...(tail)) {
-        cerr << ", ";
-        DEBUG_PRINT(names + i + 2, tail...);
-    } else {
-        cerr << endl;
-    }
-}
-#define DEBUG(...) {cerr << "\033[30m" "[" << __LINE__ << "] "; DEBUG_PRINT(#__VA_ARGS__, __VA_ARGS__); cerr << "\033[0m";}
-#define ERROR(x) {cerr << "\033[31m" "[" << __LINE__ << "] "; cerr << (x) << '\n'; cerr << "\033[0m";}
-#define LOG(x) {cerr << "\033[36m" "[" << __LINE__ << "] "; cerr << (x) << '\n'; cerr << "\033[0m";}
+#ifdef LOCAL
+#include <local.h>
 #else
-#define DEBUG(...)
-#define ERROR(x)
-#define LOG(x)
+#define debug(...)
+#define error(x)
+#define log(x)
 #endif
 
+void pre() {
+
+}
+
 struct TestCase {
-    
+
     TestCase() {
-        parse();
+
     }
-    void parse();
-    void solve();
+
+    void solve() {
+
+    }
 };
-
-void TestCase::parse() {
-    
-}
-
-void TestCase::solve() {
-    
-}
 
 int main(int argc, char** argv) {
     ios::sync_with_stdio(false);
     cin.tie(0);
+    pre();
     int te = 1;
     // cin >> te;
     int single = -1;
-    #ifndef ONLINE_JUDGE
+    #ifdef LOCAL
     if (argc >= 2) single = atoi(argv[1]);
     #endif
     rep(test, 1, te + 1) {
-        DEBUG(test);
+        debug(test);
         TestCase tc;
         if (single == -1 || test == single) tc.solve();
     }
