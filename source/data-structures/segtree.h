@@ -52,8 +52,7 @@ public:
         while (l < r) {
             if (l & 1) le = op(le, d[l++]);
             if (r & 1) ri = op(d[--r], ri);
-            l >>= 1;
-            r >>= 1;
+            l >>= 1; r >>= 1;
         }
         return op(le, ri);
     }
