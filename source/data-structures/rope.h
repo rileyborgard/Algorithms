@@ -5,9 +5,9 @@ public:
     struct node {
         T x;
         int cnt;
-        node *l, *r, *p;
-        node(T x, int cnt, node* l = nullptr, node* r = nullptr, node* p = nullptr) : x(x), cnt(cnt), l(l), r(r), p(p) {}
-        bool leaf() const { return !l && !r; }
+        node *c[2], *p;
+        node(T x, int cnt, node* l = nullptr, node* r = nullptr, node* p = nullptr) : x(x), cnt(cnt), p(p) { c[0] = l; c[1] = r; }
+        inline bool leaf() const { return !c[0] && !c[1]; }
     };
 private:
     int n;
@@ -16,126 +16,50 @@ private:
     void update(node* a) {
         a->p = nullptr;
         if (a->leaf()) return;
-        if (a->l) a->l->p = a;
-        if (a->r) a->r->p = a;
-        if (!a->l) {
-            a->x = a->r->x;
-            a->cnt = a->r->cnt;
-            return;
-        }
-        if (!a->r) {
-            a->x = a->l->x;
-            a->cnt = a->l->cnt;
-            return;
-        }
-        a->x = op(a->l->x, a->r->x);
-        a->cnt = a->l->cnt + a->r->cnt;
+        a->c[0]->p = a->c[1]->p = a;
+        a->x = op(a->c[0]->x, a->c[1]->x);
+        a->cnt = a->c[0]->cnt + a->c[1]->cnt;
     }
     node* make_internal(node* l, node* r) {
         node* res = new node(e, 0, l, r);
         return update(res), res;
     }
     bool balanced(int cnt1, int cnt2) const {
-        #warning TODO: Optimize
         const float alpha = 0.2;
         return cnt1 >= alpha * cnt2 && cnt2 >= alpha * cnt1;
     }
+    template <bool b> node* zig(node* a) {
+        node* r = a->c[b];
+        a->c[b] = r->c[!b];
+        r->c[!b] = a;
+        return update(a), update(r), r;
+    }
+    template <bool b> node* zigzag(node* a) {
+        node* r = a->c[b], *l = r->c[!b];
+        a->c[b] = l->c[!b];
+        r->c[!b] = l->c[b];
+        l->c[!b] = a;
+        l->c[b] = r;
+        return update(a), update(r), update(l), l;
+    }
     node* rebalance(node* a) {
         if (!a || a->leaf()) return a;
-        assert(a->l);
-        assert(a->r);
-        if (balanced(a->l->cnt, a->r->cnt)) return a;
-        if (a->l->cnt < a->r->cnt) {
-            // left smaller
-            assert(a->r->l);
-            assert(a->r->r);
-
-            if (balanced(a->l->cnt, a->r->l->cnt) && balanced(a->l->cnt + a->r->l->cnt, a->r->r->cnt)) {
-                // single left rotation
-                node* x = a->l;
-                node* y = a->r->l;
-                node* z = a->r->r;
-                node* l = a->r;
-                l->l = x;
-                l->r = y;
-                a->l = l;
-                a->r = z;
-                update(l);
-                update(a);
-                return a;
+        node *l = a->c[0], *r = a->c[1];
+        if (balanced(l->cnt, r->cnt)) return update(a), a;
+        if (l->cnt < r->cnt) {
+            if (balanced(l->cnt, r->c[0]->cnt) && balanced(l->cnt + r->c[0]->cnt, r->c[1]->cnt)) {
+                return zig<1>(a);
+            } else {
+                return zigzag<1>(a);
             }
-
-            // double rotation
-            assert(!a->r->l->leaf());
-            node* x = a->l;
-            node* y = a->r->l->l;
-            node* z = a->r->l->r;
-            node* w = a->r->r;
-            assert(x);
-            assert(y);
-            assert(z);
-            assert(w);
-            node* l = a->r->l;
-            node* r = a->r;
-            l->l = x;
-            l->r = y;
-            r->l = z;
-            r->r = w;
-            a->l = l;
-            a->r = r;
-            update(l);
-            assert(balanced(l->l->cnt, l->r->cnt));
-            update(r);
-            assert(balanced(r->l->cnt, r->r->cnt));
-            update(a);
-            assert(balanced(l->cnt, r->cnt));
-            return a;
         } else {
-            assert(a->l->l);
-            assert(a->l->r);
-            if (balanced(a->r->cnt, a->l->r->cnt) && balanced(a->r->cnt + a->l->r->cnt, a->l->l->cnt)) {
-                // single right rotation
-                node* x = a->l->l;
-                node* y = a->l->r;
-                node* z = a->r;
-                node* r = a->l;
-                r->l = y;
-                r->r = z;
-                a->l = x;
-                a->r = r;
-                update(r);
-                update(a);
-                return a;
+            if (balanced(r->cnt, l->c[1]->cnt) && balanced(r->cnt + l->c[1]->cnt, l->c[0]->cnt)) {
+                return zig<0>(a);
+            } else {
+                return zigzag<0>(a);
             }
-            // double rotation
-            assert(a->l->r);
-            assert(!a->l->r->leaf());
-            node* x = a->l->l;
-            node* y = a->l->r->l;
-            node* z = a->l->r->r;
-            node* w = a->r;
-            assert(x);
-            assert(y);
-            assert(z);
-            assert(w);
-            node* l = a->l->r;
-            node* r = a->l;
-            l->l = x;
-            l->r = y;
-            r->l = z;
-            r->r = w;
-            a->l = l;
-            a->r = r;
-            update(l);
-            assert(balanced(l->l->cnt, l->r->cnt));
-            update(r);
-            assert(balanced(r->l->cnt, r->r->cnt));
-            update(a);
-            assert(balanced(l->cnt, r->cnt));
-            return a;
         }
     }
-
 public:
     explicit rope(T e) : n(0), op(Op()), e(e) {}
     int size() const { return n; }
@@ -150,8 +74,8 @@ public:
         T x = e;
         while (a->p) {
             node* p = a->p;
-            if (p->r == a && p->l) {
-                x = op(x, p->l->x);
+            if (p->c[1] == a && p->c[0]) {
+                x = op(x, p->c[0]->x);
             }
             a = p;
         }
@@ -161,8 +85,8 @@ public:
         int idx = 0;
         while (a->p) {
             node* p = a->p;
-            if (p->r == a && p->l) {
-                idx += p->l->cnt;
+            if (p->c[1] == a && p->c[0]) {
+                idx += p->c[0]->cnt;
             }
             a = p;
         }
@@ -178,16 +102,16 @@ public:
             (f(op(x, a->x)) ? l : r) = a;
             return;
         }
-        T xl = a->l ? op(x, a->l->x) : x;
+        T xl = a->c[0] ? op(x, a->c[0]->x) : x;
         if (f(xl)) {
             node* ar = nullptr;
-            splitf(a->r, ar, r, f, xl);
-            l = merge(a->l, ar);
+            splitf(a->c[1], ar, r, f, xl);
+            l = merge(a->c[0], ar);
             delete a;
         } else {
             node* al = nullptr;
-            splitf(a->l, l, al, f, x);
-            r = merge(al, a->r);
+            splitf(a->c[0], l, al, f, x);
+            r = merge(al, a->c[1]);
             delete a;
         }
     }
@@ -198,16 +122,16 @@ public:
             (k > 0 ? l : r) = a;
             return;
         }
-        int lcnt = a->l ? a->l->cnt : 0;
+        int lcnt = a->c[0] ? a->c[0]->cnt : 0;
         if (k >= lcnt) {
             node* ar = nullptr;
-            split(a->r, ar, r, k - lcnt);
-            l = merge(a->l, ar);
+            split(a->c[1], ar, r, k - lcnt);
+            l = merge(a->c[0], ar);
             delete a;
         } else {
             node* al = nullptr;
-            split(a->l, l, al, k);
-            r = merge(al, a->r);
+            split(a->c[0], l, al, k);
+            r = merge(al, a->c[1]);
             delete a;
         }
     }
@@ -218,12 +142,10 @@ public:
             return make_internal(a, b);
         }
         if (a->cnt > b->cnt) {
-            a->r = merge(a->r, b);
-            update(a);
+            a->c[1] = merge(a->c[1], b);
             return rebalance(a);
         } else {
-            b->l = merge(a, b->l);
-            update(b);
+            b->c[0] = merge(a, b->c[0]);
             return rebalance(b);
         }
     }
@@ -240,7 +162,7 @@ public:
     template <class F> void for_each(node* a, F f) {
         if (!a) return;
         if (a->leaf()) f(a->x);
-        if (a->l) for_each(a->l, f);
-        if (a->r) for_each(a->r, f);
+        if (a->c[0]) for_each(a->c[0], f);
+        if (a->c[1]) for_each(a->c[1], f);
     }
 };
