@@ -74,6 +74,20 @@ public:
         }
         return {p, idx};
     }
+    node* at(node* a, int k) const {
+        while (a) {
+            int s = size_of(a->l);
+            if (k == s) {
+                return a;
+            } else if (k < s) {
+                a = a->l;
+            } else {
+                k -= 1 + s;
+                a = a->r;
+            }
+        }
+        return nullptr;
+    }
     std::pair<node*, node*> split(node* a, int k) {
         node *l, *r;
         split(a, l, r, k);
