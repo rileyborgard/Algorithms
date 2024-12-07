@@ -1,106 +1,106 @@
 
-template<typename T>
-struct treapnode {
-    T val;
-    int y, cnt;
-    treapnode *left, *right;
-    treapnode(T val = T(), int y = rand()) : val(val), y(y) {
-        left = right = NULL;
-        cnt = 1;
-    }
-    void upd() {
-        cnt = 1 + (left ? left->cnt : 0) + (right ? right->cnt : 0);
-    }
-};
-
-template<typename T>
+template <typename T>
 struct treap {
-    treapnode<T> *root;
-    treap(treapnode<T> *x = NULL) : root(x) {}
-    treap(const vector<T> &v) {
-        root = build(v, 0, (int) v.size());
+public:
+    struct node {
+        T value;
+        int cnt, y;
+        node *l, *r, *p;
+        node(T value, int cnt, int y, node* l = nullptr, node* r = nullptr, node* p = nullptr) : value(value), cnt(cnt), y(y), l(l), r(r), p(p) {}
+    };
+private:
+    std::mt19937 rng;
+    int rand() {
+        std::uniform_int_distribution<int> uni(0, INT_MAX);
+        return uni(rng);
     }
-
-    treapnode<T>* build(const vector<T> &v, int l, int r) {
-        if(l == r) return NULL;
-        int m = (l + r) / 2;
-        treapnode<T> *x = new treapnode(v[m]);
-        x->left = build(v, l, m);
-        x->right = build(v, m + 1, r);
-        x->upd();
-        return x;
+    void update(node* a) {
+        assert(a);
+        a->cnt = 1 + size_of(a->l) + size_of(a->r);
     }
-    pair<treapnode<T>*, treapnode<T>*> split(treapnode<T> *x, int k) {
-        if(x == NULL) return {NULL, NULL};
-        int c = (x->left ? x->left->cnt : 0);
-        if(c >= k) {
-            pair<treapnode<T>*, treapnode<T>*> pa = split(x->left, k);
-            x->left = pa.second;
-            x->upd();
-            return {pa.first, x};
-        }else {
-            pair<treapnode<T>*, treapnode<T>*> pa = split(x->right, k - c - 1);
-            x->right = pa.first;
-            x->upd();
-            return {x, pa.second};
+    void split(node* a, node*& l, node*& r, int k) {
+        if (!a) return void(l = r = nullptr);
+        if (size_of(a->l) < k) {
+            split(a->r, a->r, r, k - size_of(a->l) - 1);
+            if (a->r) a->r->p = a;
+            l = a;
+            update(a);
+        } else {
+            split(a->l, l, a->l, k);
+            if (a->l) a->l->p = a;
+            r = a;
+            update(a);
         }
     }
-    treapnode<T>* merge(treapnode<T> *x, treapnode<T> *y) {
-        if(x == NULL) return y;
-        if(y == NULL) return x;
-        if(x->y > y->y) {
-            x->right = merge(x->right, y);
-            x->upd();
-            return x;
-        }else {
-            y->left = merge(x, y->left);
-            y->upd();
-            return y;
+    node* join(const std::vector<node*>& v, int l, int r) {
+        assert(0 <= l && l <= r && r <= (int) v.size());
+        if (l == r) return nullptr;
+        if (r - l == 1) return v[l];
+        int m = l + (r - l) / 2;
+        return join(join(v, l, m), join(v, m, r));
+    }
+public:
+    explicit treap(int seed = std::chrono::steady_clock::now().time_since_epoch().count()) : rng(seed) {}
+    node* make(T value) { return new node(value, 1, rand()); }
+    int size_of(node* a) const {
+        return a ? a->cnt : 0;
+    }
+    node* root(node* a) const {
+        if (!a) return nullptr;
+        while (a->p) a = a->p;
+        return a;
+    }
+    int index_of(node* a) const {
+        assert(a);
+        int idx = size_of(a->l);
+        while (a->p) {
+            node* p = a->p;
+            if (p->r == a) idx += 1 + size_of(p->l);
+            a = p;
+        }
+        return idx;
+    }
+    template <class F> std::pair<node, int> lower_bound(node* a, F f) {
+        int idx = 0;
+        node* p = nullptr;
+        while (a) {
+            if (f(a)) {
+                idx += size_of(a->l);
+                a = a->r;
+            } else {
+                p = a;
+                a = a->l;
+            }
+        }
+        return {p, idx};
+    }
+    std::pair<node*, node*> split(node* a, int k) {
+        node *l, *r;
+        split(a, l, r, k);
+        if (l) l->p = nullptr;
+        if (r) r->p = nullptr;
+        return {l, r};
+    }
+    node* join(node* a, node* b) {
+        if (!a) return b;
+        if (!b) return a;
+        if (a->y > b->y) {
+            a->r = join(a->r, b);
+            if (a->r) a->r->p = a;
+            return update(a), a;
+        } else {
+            b->l = join(a, b->l);
+            if (b->l) b->l->p = b;
+            return update(b), b;
         }
     }
-    pair<treap<T>, treap<T>> split(int k) {
-        pair<treapnode<T>*, treapnode<T>*> p = split(root, k);
-        return {treap(p.first), treap(p.second)};
+    node* join(const std::vector<node*>& v) {
+        return join(v, 0, v.size());
     }
-    treap<T> operator+(treap<T> y) {
-        return treap<T>(merge(root, y.root));
-    }
-    void operator+=(treap<T> y) {
-        root = merge(root, y.root);
-    }
-    void insert(int k, T val) {
-        pair<treapnode<T>*, treapnode<T>*> pa = split(root, k);
-        treapnode<T> *x = new treapnode(val);
-        root = merge(pa.first, merge(x, pa.second));
-    }
-    void erase(int l, int r) {
-        pair<treapnode<T>*, treapnode<T>*> pa = split(root, r);
-        pair<treapnode<T>*, treapnode<T>*> pb = split(pa.first, l);
-        root = merge(pb.first, pa.second);
-    }
-    T get(treapnode<T> *x, int k) {
-        if(x == NULL) return T();
-        int c = (x->left ? x->left->cnt : 0);
-        if(c > k) {
-            return get(x->left, k);
-        }else if(k == c) {
-            return x->val;
-        }else {
-            return get(x->right, k - c - 1);
-        }
-    }
-    T get(int k) {
-        return get(root, k);
-    }
-    void array(vector<T> &v, treapnode<T> *x) {
-        if(x == NULL) return;
-        array(v, x->left);
-        v.push_back(x->val);
-        array(v, x->right);
-    }
-    vector<T> array() {
-        vector<T> v;
-        array(v, root);
-        return v;
+    template <class F> void for_each(node* a, F f) const {
+        if (!a) return;
+        if (a->l) for_each(a->l, f);
+        f(a);
+        if (a->r) for_each(a->r, f);
     }
 };
