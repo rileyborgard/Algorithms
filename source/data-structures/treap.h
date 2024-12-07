@@ -60,12 +60,12 @@ public:
         }
         return idx;
     }
-    template <class F> std::pair<node, int> lower_bound(node* a, F f) {
+    template <class F> std::pair<node*, int> lower_bound(node* a, F f) {
         int idx = 0;
         node* p = nullptr;
         while (a) {
             if (f(a)) {
-                idx += size_of(a->l);
+                idx += 1 + size_of(a->l);
                 a = a->r;
             } else {
                 p = a;
