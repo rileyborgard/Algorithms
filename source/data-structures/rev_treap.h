@@ -141,4 +141,15 @@ public:
         f(a);
         if (a->r) for_each(a->r, f);
     }
+    node* insert(node* root, int k, node* u) {
+        node *l, *r;
+        split(root, l, r, k);
+        return join({l, u, r});
+    }
+    node* erase(node* root, int k) {
+        node *l, *m, *r;
+        split(root, l, r, k);
+        split(r, m, r, 1);
+        return join(l, r);
+    }
 };
