@@ -1,6 +1,28 @@
 // Source: https://github.com/rileyborgard/Algorithms/blob/main/source/template.cpp
 #include <bits/stdc++.h>
 
+#ifdef LOCAL
+#include <local.h>
+#else
+#define dbg(...)
+#define debug(...)
+#define log(...)
+#define error(...)
+template <typename T>
+char _dlim = ' ';
+template <typename T>
+char _dlim<std::vector<T>> = '\n';
+template <typename T>
+std::ostream& operator<<(std::ostream &os, const std::vector<T> &ve) {
+    int n = ve.size();
+    for (int i = 0; i < n; i++) {
+        os << ve[i];
+        if (i < n - 1) os << _dlim<T>;
+    }
+    return os;
+}
+#endif
+
 #define ll long long
 #define sz(x) ((int) (x).size())
 #define all(x) (x).begin(), (x).end()
@@ -11,32 +33,6 @@ using namespace std;
 template<typename T>
 using minpq = priority_queue<T, vector<T>, greater<T>>;
 
-template<typename>
-struct is_vector : std::false_type {};
-template<typename T, typename A>
-struct is_vector<std::vector<T,A>> : std::true_type {};
-template<typename T>
-ostream &operator<<(ostream &os, const vector<T> &ve) {
-    if (os.rdbuf() == std::cerr.rdbuf()) {
-        int n = min(sz(ve), 50);
-        os << "[ ";
-        rep(i, 0, n) {
-            os << ve[i];
-            if (i != n - 1) os << ", ";
-        }
-        if (n < sz(ve)) os << "...";
-        os << " ]";
-    } else {
-        int n = sz(ve);
-        rep(i, 0, n) {
-            os << ve[i] << ' ';
-            if constexpr(is_vector<T>::value) {
-                os << '\n';
-            }
-        }
-    }
-    return os;
-}
 template <typename T, typename... V>
 void print(T &&head, V &&... tail) {
     cout << head << ' ';
@@ -46,14 +42,6 @@ void print(T &&head, V &&... tail) {
 }
 void print() {}
 #define println(...) {print(__VA_ARGS__); cout << '\n';}
-
-#ifdef LOCAL
-#include <local.h>
-#else
-#define debug(...)
-#define error(x)
-#define log(x)
-#endif
 
 void pre() {
 
@@ -78,7 +66,7 @@ int main(int argc, char** argv) {
     // cin >> te;
     int single = -1;
     #ifdef LOCAL
-    if (argc >= 2) single = atoi(argv[1]);
+    dbg({ if (argc >= 2) single = atoi(argv[1]); })
     #endif
     rep(test, 1, te + 1) {
         debug(test);
