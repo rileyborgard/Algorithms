@@ -6,7 +6,7 @@ public:
         T value;
         int cnt, y;
         node *l, *r, *p;
-        node(T value, int cnt, int y, node* l = nullptr, node* r = nullptr, node* p = nullptr) : value(value), cnt(cnt), y(y), l(l), r(r), p(p) {}
+        node(T value, int cnt, int y) : value(value), cnt(cnt), y(y), l(nullptr), r(nullptr), p(nullptr) {}
     };
 private:
     std::mt19937 rng;
