@@ -57,6 +57,15 @@ void _debug(const char *names, T &&head, V &&... tail) {
     }
 }
 
+template <typename T, typename... V>
+void _log(T &&head, V &&... tail) {
+    std::cerr << head << ' ';
+    if constexpr (sizeof...(tail)) {
+        _log(tail...);
+    }
+}
+void _log() {}
+
 #define debug(...) {std::cerr << "\033[30m" "[" << __LINE__ << "] "; _debug(#__VA_ARGS__, __VA_ARGS__); std::cerr << "\033[0m";}
 #define error(x) {std::cerr << "\033[31m" "[" << __LINE__ << "] "; std::cerr << (x) << '\n'; std::cerr << "\033[0m";}
-#define log(x) {std::cerr << "\033[36m" "[" << __LINE__ << "] "; std::cerr << (x) << '\n'; std::cerr << "\033[0m";}
+#define log(...) {std::cerr << "\033[36m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\n\033[0m";}

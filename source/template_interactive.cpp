@@ -47,10 +47,43 @@ void pre() {
 
 }
 
+struct Interactor {
+    Interactor() {}
+    virtual ~Interactor() {}
+    virtual void ask(int x) = 0;
+    virtual void answer(int x) = 0;
+};
+
+struct LocalInteractor: public Interactor {
+    LocalInteractor() : Interactor() {
+        // Read input
+    }
+    void ask(int x) override {
+
+    }
+    void answer(int x) override {
+
+    }
+};
+
+struct ReleaseInteractor: public Interactor {
+    ReleaseInteractor() : Interactor() {}
+    void ask(int x) override {
+
+    }
+    void answer(int x) override {
+
+    }
+};
+
 struct TestCase {
-
+    unique_ptr<Interactor> inter;
     TestCase() {
-
+        #ifdef LOCAL
+        inter = make_unique<LocalInteractor>();
+        #else
+        inter = make_unique<ReleaseInteractor>();
+        #endif
     }
 
     void solve() {
