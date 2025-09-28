@@ -41,7 +41,7 @@ struct sos {
     }
     void supmobius() {
         for(int i = 0; i < n; i++) {
-            for(int s = 0; s < n; s++) {
+            for(int s = 0; s < (1 << n); s++) {
                 if(~s >> i & 1) {
                     a[s] = a[s] - a[s ^ (1 << i)];
                 }
