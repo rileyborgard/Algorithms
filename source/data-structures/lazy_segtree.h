@@ -137,7 +137,7 @@ public:
         assert(g(e));
         if (r == 0) return 0;
         r += si;
-        for (int i = log; i >= 1; i--) push((r - 1) >> i);
+        for (int i = lg; i >= 1; i--) push((r - 1) >> i);
         T sm = e;
         do {
             r--;
@@ -151,7 +151,7 @@ public:
                         r--;
                     }
                 }
-                return r + 1 - size;
+                return r + 1 - si;
             }
             sm = op(d[r], sm);
         } while ((r & -r) != r);
