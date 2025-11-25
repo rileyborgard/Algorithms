@@ -1,6 +1,11 @@
 
 #define dbg(...) __VA_ARGS__
 
+template <typename T, typename U>
+std::ostream& operator<<(std::ostream &os, const std::pair<T, U>& p) {
+    return os << "(" << p.first << ", " << p.second << ")";
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream &os, const std::vector<T> &ve) {
     if (os.rdbuf() == std::cerr.rdbuf()) {
@@ -67,5 +72,5 @@ void _log(T &&head, V &&... tail) {
 void _log() {}
 
 #define debug(...) {std::cerr << "\033[30m" "[" << __LINE__ << "] "; _debug(#__VA_ARGS__, __VA_ARGS__); std::cerr << "\033[0m";}
-#define error(x) {std::cerr << "\033[31m" "[" << __LINE__ << "] "; std::cerr << (x) << '\n'; std::cerr << "\033[0m";}
-#define log(...) {std::cerr << "\033[36m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\n\033[0m";}
+#define error(...) {std::cerr << "\033[31m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\033[0m";}
+#define info(...) {std::cerr << "\033[36m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\n\033[0m";}

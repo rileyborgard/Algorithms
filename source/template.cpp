@@ -6,7 +6,7 @@
 #else
 #define dbg(...)
 #define debug(...)
-#define log(...)
+#define info(...)
 #define error(...)
 template <typename T>
 char _dlim = ' ';
