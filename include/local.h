@@ -72,5 +72,5 @@ void _log(T &&head, V &&... tail) {
 void _log() {}
 
 #define debug(...) {std::cerr << "\033[30m" "[" << __LINE__ << "] "; _debug(#__VA_ARGS__, __VA_ARGS__); std::cerr << "\033[0m";}
-#define error(...) {std::cerr << "\033[31m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\033[0m";}
+#define error(...) {std::cerr << "\033[31m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\n\033[0m";}
 #define info(...) {std::cerr << "\033[36m" "[" << __LINE__ << "] "; _log(__VA_ARGS__); std::cerr << "\n\033[0m";}
