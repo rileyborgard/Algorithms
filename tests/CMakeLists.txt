@@ -1,7 +1,7 @@
 add_executable(algolib_tests
-    treap_test.cpp
-    rev_treap_test.cpp
-    rev_aug_treap_test.cpp
+    test_treap.cpp
+    test_rev_treap.cpp
+    test_rev_aug_treap.cpp
 )
 
 target_link_libraries(algolib_tests
