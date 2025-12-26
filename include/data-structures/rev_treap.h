@@ -65,7 +65,7 @@ public:
     }
     void flip(node* a) {
         if (!a) return;
-        swap(a->l, a->r);
+        std::swap(a->l, a->r);
         a->flip = !a->flip;
     }
     int index_of(node* a) {

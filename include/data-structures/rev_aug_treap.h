@@ -73,7 +73,7 @@ public:
     }
     void flip(node* a) {
         if (!a) return;
-        swap(a->l, a->r);
+        std::swap(a->l, a->r);
         a->flip = !a->flip;
         if (a->flip) {
             a->aug = op(op(flop(aug(a->l)), a->value), flop(aug(a->r)));
