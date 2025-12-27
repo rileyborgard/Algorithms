@@ -15,9 +15,7 @@ static void BM_DSU_Uniform(benchmark::State& state) {
         pairs[i] = {uni(rng), uni(rng)};
     }
     int ops_processed = 0;
-    int iterations = 0;
     for (auto _ : state) {
-        iterations++;
         DSU D(n);
         int sum = 0;
         for (const auto& [u, v] : pairs) {
@@ -155,10 +153,7 @@ static void BM_DSU_Adversary(benchmark::State& state) {
     }
 
     long long ops_processed = 0;
-    int iterations = 0;
-
     for (auto _ : state) {
-        iterations++;
         DSU D(n);
         int sum = 0;
         for (const auto& op : ops) {
