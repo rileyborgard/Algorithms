@@ -18,8 +18,7 @@ struct FenwickOperation {
 };
 
 static void BM_FenwickUniform(benchmark::State& state) {
-    int n = state.range(0);
-
+    int n = state.range(0) - 1;
     int m = n;
     std::vector<FenwickOperation> ops;
     std::mt19937 rng(1);
