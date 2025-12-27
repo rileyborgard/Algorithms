@@ -1,4 +1,5 @@
 add_executable(algolib_tests
+    test_fenwick.cpp
     test_treap.cpp
     test_rev_treap.cpp
     test_rev_aug_treap.cpp
