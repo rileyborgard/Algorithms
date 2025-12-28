@@ -1,18 +1,18 @@
 
-template <typename T, class Compare = std::less<T>>
-struct min_op {
-    Compare comp;
-    inline T operator()(const T& a, const T& b) const { return comp(a, b) ? a : b; }
-};
-template <typename T, class Compare = std::less<T>>
-struct max_op {
-    Compare comp;
-    inline T operator()(const T& a, const T& b) const { return comp(a, b) ? b : a; }
-};
-template <typename T>
-struct gcd_op {
-    inline T operator()(const T& a, const T& b) const { return std::gcd(a, b); }
-};
+// template <typename T, class Compare = std::less<T>>
+// struct min_op {
+//     Compare comp;
+//     inline T operator()(const T& a, const T& b) const { return comp(a, b) ? a : b; }
+// };
+// template <typename T, class Compare = std::less<T>>
+// struct max_op {
+//     Compare comp;
+//     inline T operator()(const T& a, const T& b) const { return comp(a, b) ? b : a; }
+// };
+// template <typename T>
+// struct gcd_op {
+//     inline T operator()(const T& a, const T& b) const { return std::gcd(a, b); }
+// };
 template <typename T, typename Op>
 struct Segtree {
 private:
