@@ -55,4 +55,4 @@ static void BM_FenwickUniform(benchmark::State& state) {
 }
 
 BENCHMARK(BM_FenwickUniform)
-    ->Range(1 << 8, 1 << 22);
+    ->Range(1 << 8, 1 << 22)->Unit(benchmark::kMillisecond);

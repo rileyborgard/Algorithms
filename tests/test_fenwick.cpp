@@ -1,4 +1,5 @@
 
+#include <functional>
 #include <vector>
 #include <cassert>
 #include "data-structures/fenwick.h"
