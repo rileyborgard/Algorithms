@@ -37,7 +37,7 @@ static void BM_FenwickUniform(benchmark::State& state) {
     int ops_processed = 0;
     for (auto _ : state) {
         Fenwick<int64_t> fenwick(n + 1);
-        int sum = 0;
+        int64_t sum = 0;
         for (const auto& op : ops) {
             if (op.type == FenwickOperationType::kAdd) {
                 fenwick.add(op.i, op.x);

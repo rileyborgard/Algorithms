@@ -14,16 +14,18 @@ struct gcd_op {
     inline T operator()(const T& a, const T& b) const { return std::gcd(a, b); }
 };
 template <typename T, typename Op>
-struct segtree {
+struct Segtree {
 private:
     int n, si, lg;
     Op op;
     T e;
     std::vector<T> d;
-    void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
+    void update(int k) {
+        d[k] = op(d[2 * k], d[2 * k + 1]);
+    }
 public:
-    explicit segtree(int n, T e) : segtree(std::vector<T>(n, e), e) {}
-    explicit segtree(const std::vector<T>& v, T e) : n(v.size()), op(Op()), e(e) {
+    explicit Segtree(int n, T e) : Segtree(std::vector<T>(n, e), e) {}
+    explicit Segtree(const std::vector<T>& v, T e) : n(v.size()), op(Op()), e(e) {
         si = 1;
         lg = 0;
         while (si < n) {
@@ -43,15 +45,21 @@ public:
         assert(0 <= p && p < n);
         p += si;
         d[p] = x;
-        for (int i = 1; i <= lg; i++) update(p >> i);
+        for (int i = 1; i <= lg; i++) {
+            update(p >> i);
+        }
     }
     T query(int l, int r) {
         assert(0 <= l && l <= r && r <= n);
         T le = e, ri = e;
         l += si; r += si;
         while (l < r) {
-            if (l & 1) le = op(le, d[l++]);
-            if (r & 1) ri = op(d[--r], ri);
+            if (l & 1) {
+                le = op(le, d[l++]);
+            }
+            if (r & 1) {
+                ri = op(d[--r], ri);
+            }
             l >>= 1; r >>= 1;
         }
         return op(le, ri);
