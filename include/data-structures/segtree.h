@@ -49,6 +49,13 @@ public:
             update(p >> i);
         }
     }
+    void add(int p, T x) {
+        assert(0 <= p && p < n);
+        p += si;
+        for (int i = 0; i <= lg; i++, p >>= 1) {
+            d[p] = op(d[p], x);
+        }
+    }
     T query(int l, int r) {
         assert(0 <= l && l <= r && r <= n);
         T le = e, ri = e;
