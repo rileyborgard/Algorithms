@@ -88,7 +88,9 @@ public:
     BitVector& operator|=(const BitVector &b) {
         if (_n == 0) return *this;
         size_t m = std::min(_a.size(), b._a.size());
-        for (size_t k = 0; k < m; k++) _a[k] |= b._a[k];
+        for (size_t k = 0; k < m; k++) {
+            _a[k] |= b._a[k];
+        }
         size_t l = _a.size() - 1;
         _a[l] &= LAST_MASK(_n);
         return *this;
@@ -96,7 +98,7 @@ public:
     BitVector& operator&=(const BitVector &b) {
         size_t m = std::min(_a.size(), b._a.size());
         for (size_t k = 0; k < m; k++) _a[k] &= b._a[k];
-        fill(_a.begin() + m, _a.end(), 0ull);
+        std::fill(_a.begin() + m, _a.end(), 0ull);
         return *this;
     }
     BitVector& operator^=(const BitVector &b) {
@@ -104,12 +106,20 @@ public:
         for (size_t k = 0; k < m; k++) _a[k] ^= b._a[k];
         return *this;
     }
-    BitVector operator<<(const size_t i) const {
-        BitVector out(_n);
+    void left_shift(const size_t i, BitVector& out, bool is_zero_initialized = false) const {
+        assert(out.size() == _n);
         size_t s = BLOCK(i);
         size_t m = _a.size();
-        if (_n == 0 || s >= m) return out;
+        if (_n == 0 || s >= m) {
+            if (!is_zero_initialized) {
+                std::fill(out._a.begin(), out._a.end(), 0ull);
+            }
+            return;
+        }
         size_t t = BIT(i);
+        if (!is_zero_initialized) {
+            std::fill(out._a.begin(), out._a.begin() + s, 0ull);
+        }
         if (t == 0) {
             std::copy(_a.begin(), _a.begin() + m - s, out._a.begin() + s);
         } else {
@@ -120,21 +130,38 @@ public:
         }
         size_t l = _a.size() - 1;
         out._a[l] &= LAST_MASK(_n);
+    }
+    BitVector operator<<(const size_t i) const {
+        BitVector out(_n);
+        left_shift(i, out, true);
         return out;
     }
-    BitVector operator>>(size_t i) const {
-        BitVector out(_n);
+    void right_shift(const size_t i, BitVector& out, bool is_zero_initialized = false) const {
+        assert(out.size() == _n);
         size_t s = BLOCK(i);
         size_t m = _a.size();
-        if (_n == 0 || s >= m) return out;
+        if (_n == 0 || s >= m) {
+            if (!is_zero_initialized) {
+                std::fill(out._a.begin(), out._a.end(), 0ull);
+            }
+            return;
+        }
         size_t t = BIT(i);
+        if (!is_zero_initialized) {
+            std::fill(out._a.begin() + m - s, out._a.end(), 0ull);
+        }
         if (t == 0) {
             std::copy(_a.begin() + s, _a.end(), out._a.begin());
         } else {
-            for (size_t k = 0; k < m - s - 1; k++)
+            for (size_t k = 0; k < m - s - 1; k++) {
                 out._a[k] = (_a[k + s] >> t) | (_a[k + s + 1] << (64 - t));
+            }
             out._a[m - s - 1] = _a[m - 1] >> t;
         }
+    }
+    BitVector operator>>(const size_t i) const {
+        BitVector out(_n);
+        right_shift(i, out, true);
         return out;
     }
     BitVector& operator<<=(size_t i) { return *this = *this << i; }

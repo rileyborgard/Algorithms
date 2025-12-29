@@ -2,6 +2,7 @@
 #include <random>
 #include <bitset>
 #include <vector>
+#include <cassert>
 #include "data-structures/bit_vector.h"
 #include "gtest/gtest.h"
 
