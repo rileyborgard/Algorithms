@@ -97,13 +97,13 @@ public:
         for (size_t i = 0; i < size(); i++) res[i] = -(*this)[i];
         return res;
     }
-    Vector<T> operator+(const Vector<T> &v) const {
+    Vector<T> operator+(const Vector<T>& v) const {
         assert(size() == v.size());
         Vector res(size());
         for (size_t i = 0; i < size(); i++) res[i] = (*this)[i] + v[i];
         return res;
     }
-    Vector<T> operator-(const Vector<T> &v) const {
+    Vector<T> operator-(const Vector<T>& v) const {
         assert(size() == v.size());
         Vector res(size());
         for (size_t i = 0; i < size(); i++) res[i] = (*this)[i] - v[i];
@@ -114,7 +114,7 @@ public:
         for (size_t i = 0; i < size(); i++) res[i] = (*this)[i] * c;
         return res;
     }
-    friend Vector<T> operator*(const T &c, const Vector<T> &v) {
+    friend Vector<T> operator*(const T &c, const Vector<T>& v) {
         Vector<T> res(v.size());
         for (size_t i = 0; i < size(); i++) res[i] = c * v[i];
         return res;
@@ -125,12 +125,12 @@ public:
         return res;
     }
 
-    Vector<T>& operator+=(const Vector<T> &v) {
+    Vector<T>& operator+=(const Vector<T>& v) {
         assert(size() == v.size());
         for (size_t i = 0; i < size(); i++) (*this)[i] += v[i];
         return *this;
     }
-    Vector<T>& operator-=(const Vector<T> &v) {
+    Vector<T>& operator-=(const Vector<T>& v) {
         assert(size() == v.size());
         for (size_t i = 0; i < size(); i++) (*this)[i] -= v[i];
         return *this;
@@ -144,18 +144,18 @@ public:
         return *this;
     }
 
-    bool operator==(const Vector<T> &v) const {
+    bool operator==(const Vector<T>& v) const {
         if (size() != v.size()) return false;
         for (size_t i = 0; i < size(); i++) {
             if ((*this)[i] != v[i]) return false;
         }
         return true;
     }
-    bool operator!=(const Vector<T> &v) const {
+    bool operator!=(const Vector<T>& v) const {
         return !(*this == v);
     }
 
-    T dot(const Vector<T> &v) const {
+    T dot(const Vector<T>& v) const {
         T res = T();
         for (size_t i = 0; i < size(); i++) res += (*this)[i] * v[i];
         return res;
@@ -184,15 +184,15 @@ public:
 
     template <typename U = T>
     typename std::enable_if<std::is_floating_point<U>::value, U>::type
-    distance(const Vector<T> &v) const { return (*this - v).norm(); }
+    distance(const Vector<T>& v) const { return (*this - v).norm(); }
 
-    T distance2(const Vector<T> &v) const { return (*this - v).norm2(); }
+    T distance2(const Vector<T>& v) const { return (*this - v).norm2(); }
 
     template <typename U = T>
     typename std::enable_if<std::is_floating_point<U>::value, U>::type
-    angle(const Vector<T> &v) const { return acos(dot(v)); }
+    angle(const Vector<T>& v) const { return acos(dot(v)); }
 
-    friend std::ostream& operator<<(std::ostream &out, const Vector<T> &v) {
+    friend std::ostream& operator<<(std::ostream &out, const Vector<T>& v) {
         for (size_t i = 0; i < v.size(); i++) {
             out << v[i];
             if (i + 1 < v.size()) out << " ";
@@ -267,15 +267,15 @@ public:
         return Matrix(n_, m_, a_ - m.a_);
     }
     Matrix<T> operator*(const T &c) const { return Matrix<T>(n_, m_, a_ * c); }
-    friend Matrix<T> operator*(const T &c, const Matrix<T> &m) { return Matrix<T>(m.n_, m.m_, c * m.a_); }
+    friend Matrix<T> operator*(const T &c, const Matrix<T>& m) { return Matrix<T>(m.n_, m.m_, c * m.a_); }
     Matrix<T> operator/(const T &c) const { return Matrix<T>(n_, m_, a_ / c); }
 
-    Matrix<T>& operator+=(const Matrix<T> &m) {
+    Matrix<T>& operator+=(const Matrix<T>& m) {
         assert(n_ == m.n_ && m_ == m.m_);
         a_ += m.a_;
         return *this;
     }
-    Matrix<T>& operator-=(const Matrix<T> &m) {
+    Matrix<T>& operator-=(const Matrix<T>& m) {
         assert(n_ == m.n_ && m_ == m.m_);
         a_ -= m.a_;
         return *this;
@@ -289,7 +289,7 @@ public:
         return *this;
     }
 
-    Vector<T> operator*(const Slice<T> &v) const {
+    Vector<T> operator*(const Slice<T>& v) const {
         assert(width() == v.size());
         Vector<T> res(height());
         for (size_t i = 0; i < height(); i++)
@@ -298,7 +298,7 @@ public:
         return res;
     }
 
-    friend Vector<T> operator*(const Slice<T> &v, const Matrix<T> &m) {
+    friend Vector<T> operator*(const Slice<T>& v, const Matrix<T>& m) {
         assert(v.size() == m.height());
         Vector<T> res(m.width());
         for (size_t i = 0; i < m.height(); i++)
@@ -307,7 +307,7 @@ public:
         return res;
     }
 
-    Matrix<T> operator*(const Matrix<T> &m) const {
+    Matrix<T> operator*(const Matrix<T>& m) const {
         assert(width() == m.height());
         Matrix<T> res(height(), m.width());
         for (size_t i = 0; i < height(); i++)
@@ -316,6 +316,21 @@ public:
                     res(i, j) += at(i, k) * m(k, j);
         return res;
     }
+
+    Matrix<T> pow(long long k) const {
+        assert(n_ == m_);
+        Matrix<T> res(Diagonal{}, n_, T(1));
+        Matrix<T> A = *this;
+        while (k > 0) {
+            if (k & 1) {
+                res = res * A;
+            }
+            A = A * A;
+            k >>= 1;
+        }
+        return res;
+    }
+
     Matrix<T> transpose() const {
         Matrix<T> res(m_, n_);
         for (size_t i = 0; i < n_; i++)
@@ -324,7 +339,7 @@ public:
         return res;
     }
 
-    friend std::ostream& operator<<(std::ostream &out, const Matrix<T> &m) {
+    friend std::ostream& operator<<(std::ostream &out, const Matrix<T>& m) {
         for (size_t i = 0; i < m.height(); i++) {
             for (size_t j = 0; j < m.width(); j++) {
                 out << m(i, j);
