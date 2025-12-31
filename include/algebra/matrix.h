@@ -290,35 +290,62 @@ public:
     }
 
     Vector<T> operator*(const Slice<T>& v) const {
-        assert(width() == v.size());
-        Vector<T> res(height());
-        for (size_t i = 0; i < height(); i++)
-            for (size_t j = 0; j < width(); j++)
-                res[i] += at(i, j) * v[j];
-        return res;
+        assert(m_ == v.size());
+        Vector<T> r(n_, T());
+        const T* ap = a_.data();
+        const T* vp = v.data();
+
+        for (size_t i = 0; i < n_; ++i) {
+            const T* row = ap + i * m_;
+            T sum = T();
+            for (size_t j = 0; j < m_; ++j)
+                sum += row[j] * vp[j];
+            r[i] = sum;
+        }
+        return r;
     }
 
-    friend Vector<T> operator*(const Slice<T>& v, const Matrix<T>& m) {
-        assert(v.size() == m.height());
-        Vector<T> res(m.width());
-        for (size_t i = 0; i < m.height(); i++)
-            for (size_t j = 0; j < m.width(); j++)
-                res[j] += v[i] * m(i, j);
-        return res;
+    friend Vector<T> operator*(const Slice<T>& v, const Matrix& m) {
+        assert(v.size() == m.n_);
+        Vector<T> r(m.m_, T());
+        const T* vp = v.data();
+        const T* ap = m.a_.data();
+
+        for (size_t i = 0; i < m.n_; ++i) {
+            const T vv = vp[i];
+            const T* row = ap + i * m.m_;
+            for (size_t j = 0; j < m.m_; ++j)
+                r[j] += vv * row[j];
+        }
+        return r;
     }
 
-    Matrix<T> operator*(const Matrix<T>& m) const {
-        assert(width() == m.height());
-        Matrix<T> res(height(), m.width());
-        for (size_t i = 0; i < height(); i++)
-            for (size_t k = 0; k < width(); k++)
-                for (size_t j = 0; j < m.width(); j++)
-                    res(i, j) += at(i, k) * m(k, j);
-        return res;
+    Matrix operator*(const Matrix& o) const {
+        assert(m_ == o.n_);
+        Matrix r(n_, o.m_, T());
+
+        const T* A = a_.data();
+        const T* B = o.a_.data();
+        T* C = r.a_.data();
+
+        for (size_t i = 0; i < n_; ++i) {
+            const T* Ai = A + i * m_;
+            T* Ci = C + i * o.m_;
+
+            for (size_t k = 0; k < m_; ++k) {
+                const T aik = Ai[k];
+                const T* Bk = B + k * o.m_;
+
+                for (size_t j = 0; j < o.m_; ++j)
+                    Ci[j] += aik * Bk[j];
+            }
+        }
+        return r;
     }
 
     Matrix<T> pow(long long k) const {
         assert(n_ == m_);
+        assert(k >= 0);
         Matrix<T> res(Diagonal{}, n_, T(1));
         Matrix<T> A = *this;
         while (k > 0) {
