@@ -7,6 +7,7 @@ add_executable(algolib_tests
     test_bit_vector.cpp
     test_matrix.cpp
     test_next_array.cpp
+    test_run_length.cpp
 )
 
 target_link_libraries(algolib_tests
