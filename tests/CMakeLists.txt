@@ -6,6 +6,7 @@ add_executable(algolib_tests
     test_rev_aug_treap.cpp
     test_bit_vector.cpp
     test_matrix.cpp
+    test_next_array.cpp
 )
 
 target_link_libraries(algolib_tests
