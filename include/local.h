@@ -2,12 +2,12 @@
 #define dbg(...) __VA_ARGS__
 
 template <typename T, typename U>
-std::ostream& operator<<(std::ostream &os, const std::pair<T, U>& p) {
+std::ostream& operator<<(std::ostream& os, const std::pair<T, U>& p) {
     return os << "(" << p.first << ", " << p.second << ")";
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream &os, const std::vector<T> &ve) {
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& ve) {
     if (os.rdbuf() == std::cerr.rdbuf()) {
         int n = std::min((int) ve.size(), 50);
         os << "[ ";
@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T> &ve) {
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream &os, const std::vector<std::vector<T>> &ve) {
+std::ostream& operator<<(std::ostream& os, const std::vector<std::vector<T>>& ve) {
     if (os.rdbuf() == std::cerr.rdbuf()) {
         int n = std::min((int) ve.size(), 50);
         os << "[ ";
@@ -48,8 +48,46 @@ std::ostream& operator<<(std::ostream &os, const std::vector<std::vector<T>> &ve
     return os;
 }
 
+template <typename T, size_t N>
+std::ostream& operator<<(std::ostream& os, const std::array<T, N>& ar) {
+    int n = std::min((int) N, 50);
+    os << "[ ";
+    for (int i = 0; i < n; i++) {
+        os << ar[i];
+        if (i < n - 1) os << ", ";
+    }
+    if (n < (int) N) os << "...";
+    return os << " ]";
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::set<T>& se) {
+    int n = std::min((int) se.size(), 50);
+    os << "{ ";
+    auto it = se.begin();
+    for (auto i = 0; i < n; i++, it++) {
+        os << *it;
+        if (i < n - 1) os << ", ";
+    }
+    if (n < (int) se.size()) os << "...";
+    return os << " }";
+}
+
+template <typename T, typename U>
+std::ostream& operator<<(std::ostream& os, const std::map<T, U>& ma) {
+    int n = std::min((int) ma.size(), 50);
+    os << "{ ";
+    auto it = ma.begin();
+    for (auto i = 0; i < n; i++, it++) {
+        os << it->first << " -> " << it->second;
+        if (i < n - 1) os << ", ";
+    }
+    if (n < (int) ma.size()) os << "...";
+    return os << " }";
+}
+
 template <typename T, typename... V>
-void _debug(const char *names, T &&head, V &&... tail) {
+void _debug(const char *names, T&& head, V&&... tail) {
     int i = 0;
     while (names[i] != ',' && names[i] != '\0') i++;
     std::cerr.write(names, i);
@@ -63,7 +101,7 @@ void _debug(const char *names, T &&head, V &&... tail) {
 }
 
 template <typename T, typename... V>
-void _log(T &&head, V &&... tail) {
+void _log(T&& head, V&&... tail) {
     std::cerr << head << ' ';
     if constexpr (sizeof...(tail)) {
         _log(tail...);
