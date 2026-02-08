@@ -58,7 +58,7 @@ public:
     void set(int p, T x) {
         assert(0 <= p && p < n);
         p += si;
-        for (int i = lg; i >>= 1; i--) push(p >> i);
+        for (int i = lg; i >= 1; i--) push(p >> i);
         d[p] = x;
         for (int i = 1; i <= lg; i++) upd(p >> i);
     }
