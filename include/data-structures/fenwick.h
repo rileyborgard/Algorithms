@@ -27,10 +27,11 @@ struct Fenwick {
     int lower_bound(T val) {
         int i = 0;
         T sum = e;
-        for(int k = lg; k >= 0; k--) {
-            if(i + (1 << k) < n && sum + a[i + (1 << k)] < val) {
-                i += (1 << k);
-                sum = op(sum, a[i]);
+        for (int k = lg; k >= 0; k--) {
+            int next = i + (1 << k);
+            if (next < n && op(sum, a[next]) < val) {
+                i = next;
+                sum = op(sum, a[next]);
             }
         }
         return i + 1;

@@ -116,7 +116,7 @@ public:
     }
     friend Vector<T> operator*(const T &c, const Vector<T>& v) {
         Vector<T> res(v.size());
-        for (size_t i = 0; i < size(); i++) res[i] = c * v[i];
+        for (size_t i = 0; i < v.size(); i++) res[i] = c * v[i];
         return res;
     }
     Vector<T> operator/(const T &c) const {

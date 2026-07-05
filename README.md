@@ -14,35 +14,32 @@ Quick start (Linux / macOS)
 
 1. Requirements
    - CMake 3.20 or newer
-   - A C++17-compatible compiler (GCC, Clang, or MSVC)
+   - A C++20-compatible compiler (GCC, Clang, or MSVC)
    - Git
 
 2. Build
    ```bash
    git clone https://github.com/<your-username>/Algorithms.git
    cd Algorithms
-   mkdir -p build
-   cd build
-   cmake ..
-   cmake --build . -- -j$(nproc)
+   cmake -S . -B build
+   cmake --build build --parallel
    ```
 
 3. Run tests
-   From the build directory run:
+   From the repo root run:
    ```bash
-   ctest --output-on-failure -j$(nproc)
+   ctest --test-dir build --output-on-failure --parallel
    ```
-   Or run a test binary directly (example):
+   Or run a test binary directly:
    ```bash
-   ./tests/algolib_tests
+   ./build/tests/algolib_tests
    ```
 
 4. Run benchmarks
    Build the benchmark target and run the resulting binary. Exact target name may vary; the repository uses CMake FetchContent to pull Google Benchmark.
    ```bash
-   # from build/
-   cmake --build . --target algolib_benchmarks
-   ./benchmarks/algolib_benchmarks
+   cmake --build build --target algolib_benchmarks
+   ./build/benchmarks/algolib_benchmarks
    ```
 
 Notes
